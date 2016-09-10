@@ -37,10 +37,10 @@
 			"<td><input type='password' name='password' class='password' placeholder='Password'><span id='passwordSpanLogin'></span></td>"+
 			"</tr>"+
 			"<tr>"+
-			"<td><span id='loginErrorSpan'></span></td>"+
+			"<td><button class='login' onclick='login()'>Login</button></td>"+
 			"</tr>"+
 			"<tr>"+
-			"<td><button class='login' onclick='login()'>Login</button></td>"+
+			"<td><span id='loginErrorSpan'></span></td>"+
 			"</tr>"+
 			"</table>";
 			$(".formContainer").html(loginForm);
@@ -136,7 +136,7 @@
 			else if(password==null || password=="")
 			{
 				$("#emailSpanLogin").html("");
-				$("#loginErrorSpan").html("Enter passowrd.");
+				$("#passwordSpanLogin").html("Enter passowrd.");
 			}
 			else
 			{
@@ -166,11 +166,11 @@
 							form.appendChild(hiddenField2);
 						    document.body.appendChild(form);
 						    form.submit();
-							$("#loginErrorSpan").html("");
+						    $("#passwordSpanLogin").html("");
 						}
 						else
 						{
-							$("#emailSpanLogin").html("");
+							$("#passwordSpanLogin").html("");
 							$("#loginErrorSpan").html("Password is wrong. (Or) User Doesn't Exists. Please SignUp");
 						}
 					}
