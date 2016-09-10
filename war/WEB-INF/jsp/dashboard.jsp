@@ -7,6 +7,11 @@
 <title>FindAnswerHere</title>
 </head>
 <body>
+	<%
+		String email=session.getAttribute("email").toString();
+		String userName=session.getAttribute("userName").toString();
+	%>
+	<p>Welcome: <%=userName%></p>
 	<p>Hello Programmers You can find answers for any questions here.</p>
 </body>
 </html>
