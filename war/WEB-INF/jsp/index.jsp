@@ -51,7 +51,6 @@
 			var userName=$(".userName").val();
 			var email=$(".emailId").val();
 			var password=$(".password").val();
-			console.log("UserName: "+userName+" Email: "+email+" Password: "+password);
 			if(userName==null || userName=="")
 			{
 				$("#userNameSpan").html("UserName should not be null.");
@@ -96,15 +95,28 @@
 						dataType:"json",
 						data:JSON.stringify(data),
 						success: function(responseFromServer){
-							var parsedResponse=JSON.parse(responseFromServer);
-							if(parsedResponse.email==email)
+							if(responseFromServer.email!=email)
 							{
-								window.location.href = "/dashboard";
-								$("#errorSpan").html("");
+								$("#errorSpan").html("User Already Exists.");
 							}
 							else
 							{
-								$("#errorSpan").html("User Already Exists.");
+								var form = document.createElement("form");
+	    						form.setAttribute("method", "post");
+	    						form.setAttribute("action", "/dashboard");
+						        var hiddenField1 = document.createElement("input");
+					            hiddenField1.setAttribute("type", "hidden");
+						        hiddenField1.setAttribute("name", "email");
+								hiddenField1.setAttribute("value", responseFromServer.email);
+								var hiddenField2 = document.createElement("input");
+								hiddenField2.setAttribute("type", "hidden");
+						        hiddenField2.setAttribute("name", "userName");
+								hiddenField2.setAttribute("value", responseFromServer.UserName);
+								form.appendChild(hiddenField1);
+								form.appendChild(hiddenField2);
+							    document.body.appendChild(form);
+							    form.submit();
+								$("#errorSpan").html("");
 							}
 						}
 					});

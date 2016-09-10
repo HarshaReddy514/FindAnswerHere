@@ -74,8 +74,14 @@ public class ControllerFile {
 			if(canStore==true)
 			{
 				pm.makePersistent(userDetails);
-				Map<String, String> map=retrieveUserData(email);
+				Map<String, String> map=new HashMap<String,String>();
+				map.put("email", email);
+				map.put("UserName", userName);
 				response.getWriter().write(new Gson().toJson(map));
+			}
+			else
+			{
+				response.getWriter().write(new Gson().toJson("false"));
 			}
 		}catch(Exception e){
 			e.printStackTrace();
@@ -112,6 +118,10 @@ public class ControllerFile {
 		{
 			Map<String, String> map=retrieveUserData(email);
 			response.getWriter().write(new Gson().toJson(map));
+		}
+		else
+		{
+			response.getWriter().write(new Gson().toJson("false"));
 		}
 	}
 	@SuppressWarnings("unchecked")
