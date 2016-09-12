@@ -3,6 +3,7 @@ package com.harsha;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -29,101 +30,91 @@ import com.google.gson.Gson;
 @Controller
 public class ControllerFile {
 	@RequestMapping("/")
-	public String home()
-	{
+	public String home() {
 		return "index";
 	}
-	@RequestMapping(value="/signUp",method=RequestMethod.POST)
-	public void storeUserDetails(HttpServletRequest request,HttpServletResponse response) throws IOException
-	{
-		BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(request.getInputStream()));
+
+	@RequestMapping(value = "/signUp", method = RequestMethod.POST)
+	public void storeUserDetails(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(request.getInputStream()));
 		String inputGiven;
-		String userData="";
-		while((inputGiven=bufferedReader.readLine())!=null)
-		{
-			userData+=inputGiven;
+		String userData = "";
+		while ((inputGiven = bufferedReader.readLine()) != null) {
+			userData += inputGiven;
 		}
 		bufferedReader.close();
 		System.out.println(userData);
-		JSONParser jsonParser= new JSONParser();
-		JSONObject jsonObject=null;
+		JSONParser jsonParser = new JSONParser();
+		JSONObject jsonObject = null;
 		try {
-			jsonObject=(JSONObject)jsonParser.parse(userData);
+			jsonObject = (JSONObject) jsonParser.parse(userData);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String userName=(String) jsonObject.get("userName");
-		String email=(String) jsonObject.get("email");
-		String password=(String) jsonObject.get("password");
-		System.out.println("UserName: "+userName+" email: "+email+" Password: "+password);
-		
+		String userName = (String) jsonObject.get("userName");
+		String email = (String) jsonObject.get("email");
+		String password = (String) jsonObject.get("password");
+		System.out.println("UserName: " + userName + " email: " + email + " Password: " + password);
+
 		byte[] passwordInBytes = password.getBytes("UTF-8");
 		String encryptedPassword = DatatypeConverter.printBase64Binary(passwordInBytes);
-		
-		UserDetails userDetails=new UserDetails();
+
+		UserDetails userDetails = new UserDetails();
 		userDetails.setDate(new Date().getTime());
 		userDetails.setUserName(userName);
 		userDetails.setEmail(email);
 		userDetails.setPassword(encryptedPassword);
-		AuthorizationHelper authorization=new AuthorizationHelper();
-		boolean canStore=false;
-		canStore=authorization.checkUserExists(email);
-		PersistenceManager pm=PMF.get().getPersistenceManager();
-		try{
-			if(canStore==true)
-			{
+		AuthorizationHelper authorization = new AuthorizationHelper();
+		boolean canStore = false;
+		canStore = authorization.checkUserExists(email);
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			if (canStore == true) {
 				pm.makePersistent(userDetails);
-				Map<String, String> map=new HashMap<String,String>();
+				Map<String, String> map = new HashMap<String, String>();
 				map.put("email", email);
 				map.put("UserName", userName);
 				response.getWriter().write(new Gson().toJson(map));
-			}
-			else
-			{
+			} else {
 				response.getWriter().write(new Gson().toJson("false"));
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		finally {
+		} finally {
 			pm.close();
 		}
 	}
-	
-	@RequestMapping(value="/login",method=RequestMethod.POST)
-	public void login(HttpServletRequest request,HttpServletResponse response) throws IOException, JSONException
-	{
-		BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(request.getInputStream()));
+
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	public void login(HttpServletRequest request, HttpServletResponse response) throws IOException, JSONException {
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(request.getInputStream()));
 		String inputGiven;
-		String userData="";
-		while((inputGiven=bufferedReader.readLine())!=null)
-		{
-			userData+=inputGiven;
+		String userData = "";
+		while ((inputGiven = bufferedReader.readLine()) != null) {
+			userData += inputGiven;
 		}
 		bufferedReader.close();
 		System.out.println(userData);
-		JSONParser jsonParser= new JSONParser();
-		JSONObject jsonObject=null;
+		JSONParser jsonParser = new JSONParser();
+		JSONObject jsonObject = null;
 		try {
-			jsonObject=(JSONObject)jsonParser.parse(userData);
+			jsonObject = (JSONObject) jsonParser.parse(userData);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String email=(String) jsonObject.get("email");
-		String password=(String) jsonObject.get("password");
-		boolean isExisting=new AuthorizationHelper().checkUserAuthorization(email,password);
-		if(isExisting==true)
-		{
-			Map<String, String> map=retrieveUserData(email);
+		String email = (String) jsonObject.get("email");
+		String password = (String) jsonObject.get("password");
+		boolean isExisting = new AuthorizationHelper().checkUserAuthorization(email, password);
+		if (isExisting == true) {
+			Map<String, String> map = retrieveUserData(email);
 			response.getWriter().write(new Gson().toJson(map));
-		}
-		else
-		{
+		} else {
 			response.getWriter().write(new Gson().toJson("false"));
 		}
 	}
+
 	@SuppressWarnings("unchecked")
 	private Map<String, String> retrieveUserData(String email) {
 		// TODO Auto-generated method stub
@@ -132,7 +123,7 @@ public class ControllerFile {
 				+ "parameters String emailParam " + "order by date desc");
 		try {
 			List<UserDetails> results = null;
-			Map<String,String> map=new HashMap<String,String>();
+			Map<String, String> map = new HashMap<String, String>();
 			results = (List<UserDetails>) q.execute(email);
 			if (!results.isEmpty() && !(results == null)) {
 				for (UserDetails data : results) {
@@ -144,17 +135,85 @@ public class ControllerFile {
 		} finally {
 			pm.close();
 			q.closeAll();
-		}	
+		}
 	}
-	@RequestMapping(value="/dashboard",method=RequestMethod.POST)
-	public ModelAndView dashBoard(HttpServletRequest request,HttpServletResponse response)
-	{
-		String email=request.getParameter("email");
-		String userName=request.getParameter("userName");
+
+	@RequestMapping(value = "/dashboard", method = RequestMethod.POST)
+	public ModelAndView dashBoard(HttpServletRequest request, HttpServletResponse response) {
+		String email = request.getParameter("email");
+		String userName = request.getParameter("userName");
 		System.out.println(email);
-		HttpSession session=request.getSession();
+		HttpSession session = request.getSession();
 		session.setAttribute("email", email);
 		session.setAttribute("userName", userName);
 		return new ModelAndView("dashboard");
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/editProfile", method = RequestMethod.POST)
+	public void editProfile(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(request.getInputStream()));
+		String inputGiven;
+		String userData = "";
+		while ((inputGiven = bufferedReader.readLine()) != null) {
+			userData += inputGiven;
+		}
+		bufferedReader.close();
+		System.out.println(userData);
+		JSONParser jsonParser = new JSONParser();
+		JSONObject jsonObject = null;
+		try {
+			jsonObject = (JSONObject) jsonParser.parse(userData);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String email = (String) jsonObject.get("email");
+		String userName = (String) jsonObject.get("userName");
+		String password = (String) jsonObject.get("password");
+		System.out.println("Email: "+email+" UserName: "+userName+" Password: "+password.isEmpty());
+		UserDetails objUserDetails = new UserDetails();
+		List<UserDetails> userList = new ArrayList<UserDetails>();
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		try {
+			String query = "select FROM " + UserDetails.class.getName() + " where email == '" + email + "'";
+			userList = (List<UserDetails>) pm.newQuery(query).execute();
+			if (!userList.isEmpty()) {
+				if(!password.isEmpty())
+				{
+					byte[] passwordInBytes = password.getBytes("UTF-8");
+					String encryptedPassword = DatatypeConverter.printBase64Binary(passwordInBytes);
+					objUserDetails = (UserDetails) userList.get(0);
+					objUserDetails.setUserName(userName);
+					objUserDetails.setPassword(encryptedPassword);
+					Map<String, String> map=new HashMap<String,String>();
+					map.put("UserName", userName);
+					map.put("email", email);
+					response.getWriter().write(new Gson().toJson(map));
+				}
+				else
+				{
+
+					objUserDetails = (UserDetails) userList.get(0);
+					objUserDetails.setUserName(userName);
+					Map<String, String> map=new HashMap<String,String>();
+					map.put("UserName", userName);
+					map.put("email", email);
+					response.getWriter().write(new Gson().toJson(map));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			pm.close();
+		}
+	}
+	@RequestMapping("/logout")
+	public String logout(HttpServletRequest request)
+	{
+		HttpSession session=request.getSession(false);
+		session.removeAttribute("email");
+		session.invalidate();
+		return "index";
 	}
 }

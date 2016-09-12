@@ -65,6 +65,110 @@ input {
 	font-size: medium;
 	width: 190px;
 }
+
+#save
+{
+	background-color: #2BCA91;
+	height: 30px;
+	border: 1px solid #2BCA91;
+	border-radius: 5px;
+	color: white;
+	font-weight: bold;
+	font-size: medium;	
+}
+
+#editProfile
+{
+	background-color: #2BCA91;
+	height: 35px;
+	border: 1px solid #2BCA91;
+	border-radius: 5px;
+	color: white;
+	font-weight: bold;
+	font-size: medium;
+	margin-top: -4.5%;
+	margin-left: 86%;
+}
+#editProfile:HOVER {
+	background-color: white;
+	color:#2BCA91;
+}
+#logout
+{
+	background-color: #2BCA91;
+	height: 35px;
+	border: 1px solid #2BCA91;
+	border-radius: 5px;
+	color: white;
+	font-weight: bold;
+	font-size: medium;
+	margin-left: 94%;
+    margin-top: -4.5%;
+}
+#logout:HOVER {
+	background-color: white;
+	color:#2BCA91;
+}
+
+#messageToUser
+{
+	position: absolute;
+	margin-left: 45%;
+	z-index: -1;
+	background: #fffed5;
+	color: black;
+	border-radius : 5px;
+	border : 1px solid #cfcd59;
+	padding : 5px;
+	display: none;
+}
+#askQuestion
+{
+	background-color: #2BCA91;
+	height: 35px;
+	border: 1px solid #2BCA91;
+	border-radius: 5px;
+	color: white;
+	font-weight: bold;
+	font-size: medium;
+	margin-left: 86%;
+    margin-top: -1%;
+    width: 13%;
+}
+#askQuestion:HOVER
+{
+	background-color: white;
+	color:#2BCA91;
+}
 span{
 	color: red;
+}
+#questionId
+{
+	padding : 10px;
+	border-radius:5px;
+	border: 1px solid #2BCA91;
+	margin-left:25%;
+	width:50%;
+	resize:none;
+}
+
+#postQuestion
+{
+	background-color: #2BCA91;
+	height: 35px;
+	border: 1px solid #2BCA91;
+	border-radius: 5px;
+	color: white;
+	font-weight: bold;
+	font-size: medium;
+	margin-left: 70%;
+    width: 5%;
+    margin-top: 1%;
+}
+
+#postQuestion:HOVER
+{
+	background-color: white;
+	color:#2BCA91;
 }
