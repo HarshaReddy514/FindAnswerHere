@@ -1,4 +1,11 @@
-<!-- Indices written at Mon, 12 Sep 2016 16:53:33 IST -->
+<!-- Indices written at Tue, 20 Sep 2016 03:26:05 IST -->
 
-<datastore-indexes/>
+<datastore-indexes>
 
+    <!-- Used 3 times in query history -->
+    <datastore-index kind="AnswersJdo" ancestor="false" source="auto">
+        <property name="questionId" direction="asc"/>
+        <property name="dateAndTime" direction="asc"/>
+    </datastore-index>
+
+</datastore-indexes>

@@ -6,7 +6,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>FindAnswerHere</title>
 <link rel="stylesheet" type="text/css" href="styles.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
 <script type="text/javascript">
 		function signUp(){
 			var signUpForm=	"<table>"+
@@ -53,21 +54,24 @@
 			var password=$(".password").val();
 			if(userName==null || userName=="")
 			{
-				$("#userNameSpan").html("UserName should not be null.");
+				$("#userNameSpan").html("UserName should not be empty.");
 				$("#emailSpan").html("");
 				$("#passwordSpan").html("");
+				$("#errorSpan").html("");
 			}
 			else if(email==null || email=="")
 			{
 				$("#userNameSpan").html("")
-				$("#emailSpan").html("Email should not be null.");
+				$("#emailSpan").html("Email should not be empty.");
 				$("#passwordSpan").html("");
+				$("#errorSpan").html("");
 			}
 			else if(password==null || password=="")
 			{
 				$("#userNameSpan").html("");
 				$("#emailSpan").html("");
-				$("#passwordSpan").html("Password should not be null.");
+				$("#errorSpan").html("");
+				$("#passwordSpan").html("Password should not be empty.").css("color","red");
 			}
 			else{
 				if(!emailRegex.test(email))
@@ -75,27 +79,32 @@
 					$("#userNameSpan").html("");
 					$("#passwordSpan").html("");
 					$("#emailSpan").html("Email specified is not valid..");
+					$("#errorSpan").html("");
 				}
 				else if(!pwdRegex.test(password))
 				{
 					$("#userNameSpan").html("");
 					$("#emailSpan").html("");
-					$("#passwordSpan").html("Password should be alphanumeric.");
+					$("#errorSpan").html("");
+					$("#passwordSpan").html("Password should be alphanumeric and atleast 6 characters.").css("color","red");
 				}
 				else
 				{
 					$("#userNameSpan").html("");
 					$("#emailSpan").html("");
 					$("#passwordSpan").html("");
+					$("#errorSpan").html("Signing In......");
 					var data={"userName":userName,"email":email,"password":password}
 					$.ajax({
 						url:"/signUp",
 						type:"post",
-						contentType:"application/json; charset=utf-8",
+						contentType:"application/json",
 						dataType:"json",
 						data:JSON.stringify(data),
 						success: function(responseFromServer){
-							if(responseFromServer.email!=email)
+							console.log(responseFromServer);
+							$("#errorSpan").html("");
+							if(responseFromServer.SuccessMsg!="success")
 							{
 								$("#errorSpan").html("User Already Exists.");
 							}
@@ -132,24 +141,28 @@
 			{
 				$("#emailSpanLogin").html("Enter Valid EmailId.");
 				$("#passwordSpanLogin").html("");
+				$("#loginErrorSpan").html("");
 			}
 			else if(password==null || password=="")
 			{
 				$("#emailSpanLogin").html("");
 				$("#passwordSpanLogin").html("Enter passowrd.");
+				$("#loginErrorSpan").html("");
 			}
 			else
 			{
+				$("#loginErrorSpan").html("Logging In....").css("color","Blue");
 				var data={"email":email,"password":password};
 				$.ajax({
 					url:"/login",
 					type:"post",
-					contentType:"application/json; charset=utf-8",
-					datatype:"json",
+					contentType:"application/json",
+					dataType:"json",
 					data:JSON.stringify(data),
 					success:function(responseFromServer){
-						var parsedResponse=JSON.parse(responseFromServer);
-						if(parsedResponse.email==email)
+						$("#loginErrorSpan").html("");
+						console.log( "  responseFromServer  :: " + responseFromServer);
+						if(responseFromServer.SucessMsg=="success")
 						{
 							var form = document.createElement("form");
     						form.setAttribute("method", "post");
@@ -157,21 +170,21 @@
 					        var hiddenField1 = document.createElement("input");
 				            hiddenField1.setAttribute("type", "hidden");
 					        hiddenField1.setAttribute("name", "email");
-							hiddenField1.setAttribute("value", parsedResponse.email);
+							hiddenField1.setAttribute("value", responseFromServer.Email);
 							var hiddenField2 = document.createElement("input");
 							hiddenField2.setAttribute("type", "hidden");
 					        hiddenField2.setAttribute("name", "userName");
-							hiddenField2.setAttribute("value", parsedResponse.UserName);
+							hiddenField2.setAttribute("value", responseFromServer.UserName);
 							form.appendChild(hiddenField1);
 							form.appendChild(hiddenField2);
 						    document.body.appendChild(form);
-						    form.submit();
+						   	form.submit();
 						    $("#passwordSpanLogin").html("");
 						}
 						else
-						{
+						{ 
 							$("#passwordSpanLogin").html("");
-							$("#loginErrorSpan").html("Password is wrong. (Or) User Doesn't Exists. Please SignUp");
+							$("#loginErrorSpan").html("Password is wrong. (Or) User Doesn't Exists. Please SignUp").css("color","red");
 						}
 					}
 				});
@@ -179,12 +192,11 @@
 		}
 </script>
 </head>
-<body>
+<body style="background-color: #C2E3C7">
 	<div class="homeContainer">
 		<button id="login" onclick="loginForm()">Login</button>
 		<button id="signup" onclick="signUp()">SignUp</button>
 	</div>
-	<div class="formContainer">
-	</div>
+	<div class="formContainer"></div>
 </body>
 </html>

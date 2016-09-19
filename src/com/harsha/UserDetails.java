@@ -9,12 +9,17 @@ public class UserDetails {
 
 	@Persistent
 	private String userName;
-	
+
 	@PrimaryKey
 	@Persistent
 	private String email;
+	
 	@Persistent
 	private String password;
+
+	@Persistent
+	private long date;
+	
 	public long getDate() {
 		return date;
 	}
@@ -22,9 +27,6 @@ public class UserDetails {
 	public void setDate(long date) {
 		this.date = date;
 	}
-
-	@Persistent
-	private long date;
 
 	public String getUserName() {
 		return userName;
