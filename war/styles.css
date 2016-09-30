@@ -90,16 +90,56 @@ input {
 	font-size: medium;
 }
 
+#updateTimeZone {
+	background-color: #2BCA91;
+    height: 35px;
+    border: 1px solid #2BCA91;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    font-size: medium;
+    margin-top: 14%;
+    margin-left: 46%;
+    width: 52%;
+}
+
+#updateTimeZone:HOVER
+{
+	background-color: white;
+	color: #2BCA91;
+	/* cursor:pointer; */
+}
+
+#updateTimeZoneId {
+	background-color: #2BCA91;
+    height: 30px;
+    border: 1px solid #2BCA91;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    font-size: medium;
+    margin-top: -2%;
+    margin-left: 74%;
+    width: 150px;
+    margin-bottom: -1%;
+}
+
+#updateTimeZoneId:HOVER
+{
+	background-color: white;
+	color: #2BCA91;
+}
+
 #editProfile {
 	background-color: #2BCA91;
-	height: 35px;
-	border: 1px solid #2BCA91;
-	border-radius: 5px;
-	color: white;
-	font-weight: bold;
-	font-size: medium;
-	margin-top: -4.5%;
-	margin-left: 86%;
+    height: 35px;
+    border: 1px solid #2BCA91;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    font-size: medium;
+    margin-top: -35%;
+    margin-left: 46%;
 }
 
 #editProfile:HOVER {
@@ -109,14 +149,14 @@ input {
 
 #logout {
 	background-color: #2BCA91;
-	height: 35px;
-	border: 1px solid #2BCA91;
-	border-radius: 5px;
-	color: white;
-	font-weight: bold;
-	font-size: medium;
-	margin-left: 94%;
-	margin-top: -4.5%;
+    height: 35px;
+    border: 1px solid #2BCA91;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    font-size: medium;
+    margin-left: 78%;
+    margin-top: 1.6%;
 }
 
 #logout:HOVER {
@@ -138,15 +178,15 @@ input {
 
 #askQuestion {
 	background-color: #2BCA91;
-	height: 35px;
-	border: 1px solid #2BCA91;
-	border-radius: 5px;
-	color: white;
-	font-weight: bold;
-	font-size: medium;
-	margin-left: 86%;
-	margin-top: -1%;
-	width: 13%;
+    height: 35px;
+    border: 1px solid #2BCA91;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    font-size: medium;
+    margin-left: 46%;
+    margin-top: -23%;
+    width: 52%;
 }
 
 #askQuestion:HOVER {
@@ -175,7 +215,7 @@ span {
 	color: white;
 	font-weight: bold;
 	font-size: medium;
-	margin-left: 68%;
+	margin-left: 60%;
     width: 7%;
 	margin-top: -2.5%;
 }
@@ -235,10 +275,17 @@ span {
     color: white;
     font-weight: bold;
     font-size: medium;
-    margin-left: 80%;
+    margin-left: 64%;
     width: 15%;
     margin-top: -3.5%;
 }
+
+#saveAnswer:HOVER
+{
+	background-color: white;
+	color: #2BCA91;
+}
+
 #cancelQuestion
 {
 	background-color: #2BCA91;
@@ -248,7 +295,7 @@ span {
     color: white;
     font-weight: bold;
     font-size: medium;
-    margin-left: 60%;
+    margin-left: 68%;
     width: 7%;
     margin-top: 1%;
 }
@@ -271,7 +318,7 @@ span {
     color: white;
     font-weight: bold;
     font-size: medium;
-    margin-left: 63%;
+    margin-left: 80%;
     width: 15%;
     margin-top: 1%;
 }
@@ -294,7 +341,87 @@ span {
     background-color: white;
     border-radius: 5px;
 }
-#footerSpan
+
+.timezonesList
 {
+	height:200px;
+	overflow-y: scroll;
+	width:100%;
+	margin-top: 10px;
+}
+
+.timezonesList ul{
+	list-style: none;
+	color:rgba(153, 153, 153, 0.84);
+}
+
+.timezonesList ul>li>p:HOVER
+{
+	color:black;
+	cursor:pointer;
+}
+
+#timeZoneToBeUpdated{
+	height: 30px;
+    width: 89%;
+    border-radius: 4px;
+    border: 1px solid #2BCA91;
+    margin-left: 30px;
+    margin-top: -23px;
+}
+
+select
+{
+	margin-left: 15%;
+    height: 30px;
+    border-radius: 4px;
+}
+
+#displayTimeZoneList
+{
+	background-color: #2BCA91;
+    height: 30px;
+    border: 1px solid #2BCA91;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    font-size: medium;
+    margin-top: -2%;
+    margin-left: 0%;
+    width: 161px;
+    margin-bottom: 5%;
+}
+
+#displayTimeZoneList:HOVER
+{
+	background-color: white;
+	color: #2BCA91;
+}
+
+.footerSpan
+{
+	margin-top: -20px;
 	color: black;
+	float:left;
+}
+#timeStandard
+{
+	margin-left: 10px;
+}
+#buttonsDiv
+{
+    width: 25%;
+    margin-left: 74%;
+    margin-top: -7%;
+    height: 33%;
+}
+#title
+{
+	margin-left: 41%;
+    margin-top: 15%;
+}
+#titleHeading
+{
+	color: #2BCA91;
+    font-family: Cursive;
 }

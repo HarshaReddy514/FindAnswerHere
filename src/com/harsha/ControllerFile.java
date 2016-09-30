@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import javax.jdo.PersistenceManager;
 import javax.servlet.http.HttpServletRequest;
@@ -36,7 +38,12 @@ public class ControllerFile {
 
 		String userName = null;
 		String email = null;
+		String timeZone;
 		String password;
+		String hours ;
+		String minutes;
+		int mins=0;
+		int hrs=0;
 		String encryptedPassword = null;
 		boolean canStore = false;
 		PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -49,13 +56,30 @@ public class ControllerFile {
 			userName = (String) map1.get("userName");
 			email = (String) map1.get("email");
 			password = (String) map1.get("password");
+			timeZone=(String)map1.get("timeZone");
+			hours=(String) map1.get("hours");
+			minutes=(String) map1.get("minutes");
+			mins=Integer.parseInt(minutes);
+			hrs=Integer.parseInt(hours);
+			mins+=hrs*60;
+			int offsetMillis=mins*60*1000;
+			String[] timezones = TimeZone.getAvailableIDs(offsetMillis);
+			String timeZoneDisplayName = null;
+			for (String id : timezones) {
+				/*TimeZone timeZoneObj = TimeZone.getTimeZone(id);
+				timeZoneObj.getDisplayName();*/
+				timeZoneDisplayName=(displayTimeZone(TimeZone.getTimeZone(id)));
+	        }
+			System.out.println("TimeZone : "+timeZoneDisplayName);
+			timeZone=timeZoneDisplayName;
 			System.out.println("UserName: " + userName + " email: " + email + " Password: " + password);
-
+			System.out.println("Timezone : "+timeZone+" hours : "+hours+" minutes : "+minutes);
 			byte[] passwordInBytes = password.getBytes("UTF-8");
 			encryptedPassword = DatatypeConverter.printBase64Binary(passwordInBytes);
 			userDetails.setDate(new Date().getTime());
-			userDetails.setUserName(userName);
+			userDetails.setTimeZone(timeZone);
 			userDetails.setEmail(email);
+			userDetails.setUserName(userName);
 			userDetails.setPassword(encryptedPassword);
 			AuthorizationHelper authorization = new AuthorizationHelper();
 			canStore = authorization.checkUserExists(email);
@@ -100,10 +124,11 @@ public class ControllerFile {
 	@RequestMapping(value = "/dashboard", method = RequestMethod.POST)
 	public String dashBoard(HttpServletRequest request, ModelMap modelMap) {
 		String email = request.getParameter("email");
-		String userName = request.getParameter("userName");
+		/*String userName = request.getParameter("userName");*/
 		System.out.println(email);
-		modelMap.addAttribute("email", email);
-		modelMap.addAttribute("userName", userName);
+		Map<String, String> map=new AuthorizationHelper().data(email);
+		modelMap.addAttribute("email", map.get("email"));
+		modelMap.addAttribute("userName", map.get("userName"));
 		return "dashboard";
 	}
 
@@ -224,21 +249,13 @@ public class ControllerFile {
 		PersistenceManager pm=PMF.get().getPersistenceManager();
 		ObjectMapper objectMapper=new ObjectMapper();
 		Map<String, String> map = new HashMap<String, String>();
-		/*String CHAR_LIST = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		int RANDOM_STRING_LENGTH = 6;
-		StringBuffer randStr = new StringBuffer();
-		for (int i = 0; i < RANDOM_STRING_LENGTH; i++) {
-			int number = new Random().nextInt(CHAR_LIST.length());
-			char ch = CHAR_LIST.charAt(number);
-			randStr.append(ch);
-		}*/
 		AnswersJdo answersJdo=new AnswersJdo();
 		long date=new Date().getTime();
 		try {
 			Map<String, String> map1=objectMapper.readValue(answerData, new TypeReference<Map<String, String>>() {});
 			answer = map1.get("answer");
 			email = map1.get("email");
-			questionId =map1.get("questionId"); 
+			questionId =map1.get("questionId");
 			System.out.println("Email: "+email+" Question: "+answer);
 			answersJdo.setAnswerId(null);
 			answersJdo.setQuestionId(questionId);
@@ -296,8 +313,74 @@ public class ControllerFile {
 		Map<String, Object> map=new HashMap<String,Object>();
 		map.put("allUsers", list);
 		return new ObjectMapper().writeValueAsString(map);
+		
+	}
+
+	@RequestMapping(value="/getAllTimeZones",method=RequestMethod.POST)
+	@ResponseBody
+	public String getAllTimeZones() throws JsonProcessingException
+	{
+		String[] ids = TimeZone.getAvailableIDs();
+		List<Object> listOfTimeZones = new ArrayList<Object>();
+		Map<String, Object> timeZonesMap=new HashMap<String, Object>();
+		for (String id : ids) {
+			/*System.out.println("TimeZone");*/
+			String timezone=(displayTimeZone(TimeZone.getTimeZone(id)));
+			Map<String, Object> timeZoneMap=new HashMap<String,Object>();
+			timeZoneMap.put("timezone", timezone);
+			listOfTimeZones.add(timeZoneMap);
+		}
+		timeZonesMap.put("TIMEZONE", listOfTimeZones);
+		timeZonesMap.put("success", true);
+		return new ObjectMapper().writeValueAsString(timeZonesMap);
 	}
 	
+	private String displayTimeZone(TimeZone timeZone) {
+		// TODO Auto-generated method stub
+		long hours = TimeUnit.MILLISECONDS.toHours(timeZone.getRawOffset());
+		long minutes = TimeUnit.MILLISECONDS.toMinutes(timeZone.getRawOffset())
+                                  - TimeUnit.HOURS.toMinutes(hours);
+		// avoid -4:-30 issue
+		minutes = Math.abs(minutes);
+
+		String result = "";
+		if (hours > 0) {
+			result = String.format("(GMT+%02d:%02d) %s (%s)", hours, minutes, timeZone.getID(), TimeZone.getTimeZone(timeZone.getID()).getDisplayName());
+		} else {
+			result = String.format("(GMT%02d:%02d) %s (%s)", hours, minutes, timeZone.getID(), TimeZone.getTimeZone(timeZone.getID()).getDisplayName());
+		}
+
+		return result;
+	}
+	
+	@RequestMapping(value="/updateTimeZone",method=RequestMethod.POST)
+	@ResponseBody
+	public String updateTimeZone(@RequestBody String dataForUpdatingTimeZOne) throws IOException
+	{
+		String email;
+		String timeZoneToUpdate;
+		ObjectMapper objectMapper=new ObjectMapper();
+		Map<String, Object> map=new HashMap<String,Object>();
+		PersistenceManager pm=PMF.get().getPersistenceManager();
+		UserDetails userDetails=new UserDetails();
+		Map<String, Object> map1 = objectMapper.readValue(dataForUpdatingTimeZOne, new TypeReference<Map<String, Object>>() {});
+		email=(String) map1.get("email");
+		System.out.println("email:"+email);
+		timeZoneToUpdate=(String) map1.get("timeZone");
+		System.out.println("TimeZone "+timeZoneToUpdate);
+		String query = "select FROM " + UserDetails.class.getName() + " where email == '" + email + "'";
+		@SuppressWarnings("unchecked")
+		List<UserDetails>userList = (List<UserDetails>) pm.newQuery(query).execute();
+		if(!userList.isEmpty())
+		{
+			userDetails=(UserDetails)userList.get(0);
+			userDetails.setTimeZone(timeZoneToUpdate);
+			map.put("Success", true);
+			map.put("timeZone", timeZoneToUpdate);
+		}
+		return objectMapper.writeValueAsString(map);
+	}
+
 	@RequestMapping("/logout")
 	public String logout() {
 		return "index";

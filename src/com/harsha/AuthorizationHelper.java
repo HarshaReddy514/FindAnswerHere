@@ -28,6 +28,7 @@ public class AuthorizationHelper {
 	public Map<String, String> data(String email) {
 		// TODO Auto-generated method stub
 		Map<String, String> userData;
+		UserDetails userDetails=new UserDetails();
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		Query q = pm.newQuery("select from " + UserDetails.class.getName() + " where email == emailParam "
 				+ "parameters String emailParam " + "order by date desc");
@@ -44,6 +45,12 @@ public class AuthorizationHelper {
 						userData.put("password",new String(decoded, "UTF-8"));
 					} catch (UnsupportedEncodingException e) {
 						e.printStackTrace();
+					}
+					System.out.println("Timezone"+data.getTimeZone());
+					if(data.getTimeZone()==null)
+					{
+						userDetails=(UserDetails)results.get(0);
+						userDetails.setTimeZone("");
 					}
 				}
 			}
@@ -75,7 +82,7 @@ public class AuthorizationHelper {
 		// TODO Auto-generated method stub
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		@SuppressWarnings("unchecked")
-		List<QuestionsJdo> questions=(List<QuestionsJdo>) pm.newQuery("select from "+ QuestionsJdo.class.getName()+" order by dateAndTime asc").execute();
+		List<QuestionsJdo> questions=(List<QuestionsJdo>) pm.newQuery("select from "+ QuestionsJdo.class.getName()+" order by dateAndTime desc").execute();
 		List<Object> list = new ArrayList<Object>();
 		for(int i=0;i<questions.size();i++)
 		{

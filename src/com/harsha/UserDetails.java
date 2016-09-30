@@ -20,6 +20,17 @@ public class UserDetails {
 	@Persistent
 	private long date;
 	
+	@Persistent
+	private String timeZone;
+	
+	public String getTimeZone() {
+		return timeZone;
+	}
+
+	public void setTimeZone(String timeZone) {
+		this.timeZone = timeZone;
+	}
+
 	public long getDate() {
 		return date;
 	}

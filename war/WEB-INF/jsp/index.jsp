@@ -52,6 +52,11 @@
 			var userName=$(".userName").val();
 			var email=$(".emailId").val();
 			var password=$(".password").val();
+			var systemTimeZone=""+new Date();
+			systemTimeZone=systemTimeZone.split(' ')[5];
+			systemTimeZone=systemTimeZone.substring(0,6)+":"+systemTimeZone.substring(6);
+			var hours=systemTimeZone.substring(5,6);
+			var minutes=systemTimeZone.substring(7);
 			if(userName==null || userName=="")
 			{
 				$("#userNameSpan").html("UserName should not be empty.");
@@ -93,8 +98,8 @@
 					$("#userNameSpan").html("");
 					$("#emailSpan").html("");
 					$("#passwordSpan").html("");
-					$("#errorSpan").html("Signing In......");
-					var data={"userName":userName,"email":email,"password":password}
+					$("#errorSpan").html("Signing Up......").css("color","blue");
+					var data={"userName":userName,"email":email,"password":password,"hours":hours,"minutes":minutes,"timeZone":systemTimeZone};
 					$.ajax({
 						url:"/signUp",
 						type:"post",
@@ -117,13 +122,8 @@
 					            hiddenField1.setAttribute("type", "hidden");
 						        hiddenField1.setAttribute("name", "email");
 								hiddenField1.setAttribute("value", responseFromServer.email);
-								var hiddenField2 = document.createElement("input");
-								hiddenField2.setAttribute("type", "hidden");
-						        hiddenField2.setAttribute("name", "userName");
-								hiddenField2.setAttribute("value", responseFromServer.UserName);
 								form.appendChild(hiddenField1);
-								form.appendChild(hiddenField2);
-							    document.body.appendChild(form);
+							    document.body.appendChild(form); 
 							    form.submit();
 								$("#errorSpan").html("");
 							}
@@ -151,6 +151,8 @@
 			}
 			else
 			{
+				$("#emailSpanLogin").html("");
+				$("#passwordSpanLogin").html("");
 				$("#loginErrorSpan").html("Logging In....").css("color","Blue");
 				var data={"email":email,"password":password};
 				$.ajax({
@@ -171,12 +173,7 @@
 				            hiddenField1.setAttribute("type", "hidden");
 					        hiddenField1.setAttribute("name", "email");
 							hiddenField1.setAttribute("value", responseFromServer.Email);
-							var hiddenField2 = document.createElement("input");
-							hiddenField2.setAttribute("type", "hidden");
-					        hiddenField2.setAttribute("name", "userName");
-							hiddenField2.setAttribute("value", responseFromServer.UserName);
 							form.appendChild(hiddenField1);
-							form.appendChild(hiddenField2);
 						    document.body.appendChild(form);
 						   	form.submit();
 						    $("#passwordSpanLogin").html("");
@@ -198,5 +195,10 @@
 		<button id="signup" onclick="signUp()">SignUp</button>
 	</div>
 	<div class="formContainer"></div>
+	<div id="title">
+		<h1 id="titleHeading">
+			Find Answer Here
+		</h1>
+	</div>
 </body>
 </html>
